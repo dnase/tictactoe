@@ -49,17 +49,34 @@ class MainHandler(webapp2.RequestHandler):
         #generate a random number to use as the key for this game
         random.seed()
         game_key = random.randint(9999,99999)
-
+        #initialize game board
+        game_state = [False for i in range(9)]
+        #cache initial game state
+        memcache.add(key = str(game_key), value = json.dumps(game_state))
         #insert the key into the HTML template
         html = MAIN_PAGE_HTML.replace('[KEY]', str(game_key))
+        #render the page
         self.response.write(html)
 
 class GetGameState(webapp2.RequestHandler):
-    def get(self):
+    def post(self):
+        client = memcache.Client()
+        #check that key argument is given as a string
+        assert type(self.request.get('key')) is string, 'Improperly formatted key argument.'
+        game_key = self.request.get('key')
+        #retrieve game state from cache
+        try:
+            game_state_json = client.gets(key)
+            self.response.write(game_state_json)
+        except:
+            self.response.write('Unable to retrieve game state with key: ' + key)
+        
+class UpdateGameState(webapp2.RequestHandler):
+    def post(self):
         return 0
-
 
 app = webapp2.WSGIApplication([
     ('/', MainHandler),
-    ('/gamestate', GetGameState)
+    ('/getgamestate', GetGameState),
+    ('/updategamestate', UpdateGameState)
 ], debug=True)

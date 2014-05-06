@@ -12,10 +12,10 @@ handlers:
 - url: /
   script: main.app
 
-- url: /game
+- url: /getgamestate
   script: main.app
 
-- url: /gamestate
+- url: /updategamestate
   script: main.app
 
 # Serve javascript
