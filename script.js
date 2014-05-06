@@ -14,7 +14,6 @@ function getGameState(squareNumber, key) {
         gameState = JSON.parse(response);
         //if the space is unoccupied
         if(gameState[squareNumber] == false) {
-            console.log(gameState[squareNumber]);
             //it is a valid move
             gameState[squareNumber] = 'X';
             updateGameState(gameState, key);

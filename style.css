@@ -1,16 +1,24 @@
-body{
+body {
     text-align:center;
 }
 
-.box{
+.box {
     text-align:left;
     width:auto;
     height:auto;
 }
  
-canvas{
+canvas {
     border: 1px solid black;
     width: 50px;
     height: 50px;
     position:relative;
+}
+
+h2 {
+    text-align: center;
+}
+
+h3 {
+    text-align: center;
 }

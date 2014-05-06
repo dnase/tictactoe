@@ -29,6 +29,8 @@ MAIN_PAGE_HTML = """\
         <script src="//code.jquery.com/jquery-1.11.0.min.js"></script>
     </head>
     <body>
+        <h2>Simple Tic Tac Toe vs. a Computer</h2>
+        <h3>Click any square to begin.</h3>
         <canvas id="square0" onclick="squareClicked(0, [KEY]);"></canvas>
         <canvas id="square1" onclick="squareClicked(1, [KEY]);"></canvas>
         <canvas id="square2" onclick="squareClicked(2, [KEY]);"></canvas>
@@ -43,6 +45,9 @@ MAIN_PAGE_HTML = """\
     </body>
 </html>
 """
+#helper function to make sure that an invalid key is not passed
+def sanitize_key(game_key):
+    return 9999 < int(game_key) < 99999
 
 class MainHandler(webapp2.RequestHandler):
     def get(self):
@@ -63,7 +68,7 @@ class GetGameState(webapp2.RequestHandler):
         client = memcache.Client()
         game_key = self.request.get('key')
         #input sanitization
-        if 9999 < int(game_key) < 99999:
+        if sanitize_key(game_key):
             #retrieve game state from cache
             try:
                 game_state_json = client.gets(game_key)
@@ -79,9 +84,9 @@ class UpdateGameState(webapp2.RequestHandler):
         game_key = self.request.get('key')
         game_state = self.request.get('game_state')
         #input sanitization
-        if 9999 < int(game_key) < 99999:
-            #retrieve game state from cache
+        if sanitize_key(game_key):
             try:
+                #update game state in cache
                 memcache.set(key = game_key, value = game_state)
                 self.response.write(game_state)
             except:
