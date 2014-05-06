@@ -15,6 +15,9 @@ handlers:
 - url: /game
   script: main.app
 
+- url: /gamestate
+  script: main.app
+
 # Serve javascript
 - url: /(.+\.js)$
   static_files: \1
