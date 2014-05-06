@@ -61,19 +61,33 @@ class MainHandler(webapp2.RequestHandler):
 class GetGameState(webapp2.RequestHandler):
     def post(self):
         client = memcache.Client()
-        #check that key argument is given as a string
-        assert type(self.request.get('key')) is string, 'Improperly formatted key argument.'
         game_key = self.request.get('key')
-        #retrieve game state from cache
-        try:
-            game_state_json = client.gets(key)
-            self.response.write(game_state_json)
-        except:
-            self.response.write('Unable to retrieve game state with key: ' + key)
+        #input sanitization
+        if 9999 < int(game_key) < 99999:
+            #retrieve game state from cache
+            try:
+                game_state_json = client.gets(game_key)
+                self.response.write(game_state_json)
+            except:
+                self.response.write(json.dumps([None for i in range(9)]))
+        else:
+            return 0
         
 class UpdateGameState(webapp2.RequestHandler):
     def post(self):
-        return 0
+        client = memcache.Client()
+        game_key = self.request.get('key')
+        game_state = self.request.get('game_state')
+        #input sanitization
+        if 9999 < int(game_key) < 99999:
+            #retrieve game state from cache
+            try:
+                memcache.set(key = game_key, value = game_state)
+                self.response.write(game_state)
+            except:
+                self.response.write(json.dumps([None for i in range(9)]))
+        else:
+            return 0
 
 app = webapp2.WSGIApplication([
     ('/', MainHandler),
