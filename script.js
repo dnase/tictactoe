@@ -35,14 +35,12 @@ function updateGameState(gameState, key) {
     //ajax request to update gamestate - check for legality serverside
     //afterwards, return the server's move and draw the board
     jsonGameState = JSON.stringify(gameState);
-    console.log("update request: " + jsonGameState);
     req = $.ajax({
         url: "/updategamestate",
         type: "post",
         data: "key=" + key + "&game_state=" + jsonGameState
     });
     req.done(function (response, textStatus, jqXHR) {
-        console.log("update response: " + response)
         //if response is 0, game is still in play
         if(response == 0) {
             drawBoard(key);
