@@ -35,6 +35,16 @@ of a web application whose data is of a more sensitive nature, I would
 use more thorough input sanitization, and likely force SSL. Theoretically, 
 it is possible for one user to guess at the key of another user's game 
 session and disrupt it, but the odds of doing so successfully are very slim.
+
+Why is this code not object oriented?
+I am perfectly comfortable writing OO Python, but for a project of this size
+and scope, it would not really contribute anything except additional overhead. 
+I understand and appreciate the advantages of writing OO code when working in
+a team of developers - modularity and maintainability are paramount in that
+sort of environment. For this application, I made a deliberate choice to keep
+it simple. Where possible, I write functions without side effects, and since
+Python does not have tail call optimization, I avoided recursion as much as
+possible.
 '''
 import cgi
 import json
