@@ -17,6 +17,7 @@
 import cgi
 import json
 import random
+import moves
 import webapp2
 from google.appengine.api import memcache
 
@@ -30,7 +31,7 @@ MAIN_PAGE_HTML = """\
     </head>
     <body>
         <h2>Simple Tic Tac Toe vs. a Computer</h2>
-        <h3>Click any square to begin.</h3>
+        <h3 id="announce">Click any square to begin.</h3>
         <canvas id="square0" onclick="squareClicked(0, [KEY]);"></canvas>
         <canvas id="square1" onclick="squareClicked(1, [KEY]);"></canvas>
         <canvas id="square2" onclick="squareClicked(2, [KEY]);"></canvas>
@@ -52,6 +53,9 @@ def sanitize_key(game_key):
 class MainHandler(webapp2.RequestHandler):
     def get(self):
         #generate a random number to use as the key for this game
+        #Though the key space is relatively small, the chances of
+        #a collision are low enough so as to be irrelevant for this
+        #particular application.
         random.seed()
         game_key = random.randint(9999,99999)
         #initialize game board
@@ -82,15 +86,33 @@ class UpdateGameState(webapp2.RequestHandler):
     def post(self):
         client = memcache.Client()
         game_key = self.request.get('key')
-        game_state = self.request.get('game_state')
+        game_state_json = self.request.get('game_state')
         #input sanitization
         if sanitize_key(game_key):
             try:
+                game_state = json.loads(game_state_json)
+                has_won = moves.winning_state(game_state)
+                if has_won == 1:
+                    #human win
+                    self.response.write("1")
+                elif has_won == 2:
+                    #computer win
+                    self.response.write("2")
+                elif has_won == 3:
+                    #tie
+                    self.response.write("3")
+                else:
+                    #game is not over
+                    game_state[moves.best_move(game_state)] = 'O'
+                    #we have to check for a computer win again, rather than wait for another human move.
+                    if moves.winning_state(game_state) == 2:
+                        self.response.write("2")
+                    else:
+                        self.response.write("0")
                 #update game state in cache
-                memcache.set(key = game_key, value = game_state)
-                self.response.write(game_state)
+                memcache.set(key = game_key, value = json.dumps(game_state))
             except:
-                self.response.write(json.dumps([None for i in range(9)]))
+                self.response.write("0")
         else:
             return 0
 

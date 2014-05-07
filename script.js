@@ -19,7 +19,7 @@ function getGameState(squareNumber, key) {
             updateGameState(gameState, key);
         } else {
             //it is an invalid move. Do nothing.
-            drawBoard(gameState);
+            drawBoard(key);
         }
     });
 }
@@ -28,60 +28,80 @@ function getGameState(squareNumber, key) {
 * updateGameState - sends an updated gameState array
 * to the server, which then updates its internal
 * representation of the game board and returns
-* the gameState array with its next move. The board
-* is then redrawn by drawBoard.
+* an integer representing whether or not the game
+* is over, and who won. The board is then redrawn.
 */
 function updateGameState(gameState, key) {
     //ajax request to update gamestate - check for legality serverside
     //afterwards, return the server's move and draw the board
     jsonGameState = JSON.stringify(gameState);
+    console.log("update request: " + jsonGameState);
     req = $.ajax({
         url: "/updategamestate",
         type: "post",
         data: "key=" + key + "&game_state=" + jsonGameState
     });
     req.done(function (response, textStatus, jqXHR) {
-        newGameState = JSON.parse(response);
-        drawBoard(gameState);
+        console.log("update response: " + response)
+        //if response is 0, game is still in play
+        if(response == 0) {
+            drawBoard(key);
+        } else {
+        //otherwise, it is in an ending state
+            //nullify onClick function wrapper
+            squareClicked = function () {};
+            a = document.getElementById("announce");
+            if(response == 1) {
+                a.innerHTML = "Human player wins! Refresh page to play again.";
+            } else if(response == 2) {
+                a.innerHTML = "Computer player wins! Refresh page to play again.";
+            } else if(response == 3) { 
+                a.innerHTML = "The game is a tie! Refresh page to play again.";
+            }
+            drawBoard(key);
+        }
     });
 }
 
 //wrapper to pass the square that was clicked
 function squareClicked(squareNumber, key) {
-    //ajax request to mark square with an "X"
     getGameState(squareNumber, key);
 }
 
 /*
 * drawBoard - draws the game board based on the
-* gameState array.
+* game state retrieved from the server.
 */
-function drawBoard(gameState) {
-    for(var i = 0; i < 9; i++) {
-        if(gameState[i] == 'X') {
+function drawBoard(key) {
+    req = $.ajax({
+        url: "/getgamestate",
+        type: "post",
+        data: "key=" + key
+    });
+    req.done(function (response, textStatus, jqXHR) {
+        gameState = JSON.parse(response);
+        //iterate through each square
+        for(var i = 0; i < 9; i++) {
             c = document.getElementById("square" + i);
-            cxt = c.getContext('2d');
-            cxt.lineWidth = 5;
-            cxt.beginPath();
-            cxt.moveTo(0,0);
-            cxt.lineTo(c.width, c.height);
-            cxt.moveTo(c.width, 0);
-            cxt.lineTo(0, c.height);
-            cxt.stroke();
-            cxt.closePath();
-        } else if(gameState[i] == 'O') {
-            c = document.getElementById("square" + i);
-            cxt = c.getContext('2d');
-            cxt.lineWidth = 5;
-            cxt.beginPath();
-            cxt.arc(c.width / 2, c.height / 2, c.width / 4, 0, Math.PI * 2, true);
-            cxt.stroke();
-            cxt.closePath();
-        }
-    }
-}
-
-function playAgain() {
-    //simple page refresh
-    location.reload(true);
+            ctx = c.getContext('2d');
+            ctx.clearRect(0, 0, c.width, c.height);
+            ctx.lineWidth = 5;
+            //draw an X on each square the human has selected
+            if(gameState[i] == 'X') {
+                ctx.beginPath();
+                ctx.moveTo(0,0);
+                ctx.lineTo(c.width, c.height);
+                ctx.moveTo(c.width, 0);
+                ctx.lineTo(0, c.height);
+                ctx.stroke();
+                ctx.closePath();
+            //draw an O on each square the computer has selected
+            } else if(gameState[i] == 'O') {
+                ctx.beginPath();
+                ctx.arc(c.width / 2, c.height / 2, c.width / 4, 0, Math.PI * 2, true);
+                ctx.stroke();
+                ctx.closePath();
+            }
+        } 
+    });
 }
