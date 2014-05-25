@@ -63,7 +63,6 @@ MAIN_PAGE_HTML = """\
     </head>
     <body>
         <h2>Simple Tic Tac Toe vs. a Computer</h2>
-        <h3 id="announce">Click any square to begin.</h3>
         <canvas id="square0" onclick="squareClicked(0, [KEY]);"></canvas>
         <canvas id="square1" onclick="squareClicked(1, [KEY]);"></canvas>
         <canvas id="square2" onclick="squareClicked(2, [KEY]);"></canvas>
@@ -75,6 +74,8 @@ MAIN_PAGE_HTML = """\
         <canvas id="square6" onclick="squareClicked(6, [KEY]);"></canvas>
         <canvas id="square7" onclick="squareClicked(7, [KEY]);"></canvas>
         <canvas id="square8" onclick="squareClicked(8, [KEY]);"></canvas>
+        <br />
+        <h3 id="announce">Click any square to begin.</h3>
     </body>
 </html>
 """

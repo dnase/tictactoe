@@ -61,7 +61,7 @@ def best_move(game_state):
     a game square.
     '''
     a = -2
-    choices = []
+    moves = []
     if  4 in _available_moves(game_state):
         return 4
     for move in _available_moves(game_state):
@@ -70,10 +70,10 @@ def best_move(game_state):
         game_state[move] = False
         if v > a:
             a = v
-            choices = [move]
+            moves = [move]
         elif v == a:
-            choices.append(move)
-    return random.choice(choices)
+            moves.append(move)
+    return random.choice(moves)
 
 def winning_state(game_state):
     '''

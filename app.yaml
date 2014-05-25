@@ -18,6 +18,11 @@ handlers:
 - url: /updategamestate
   script: main.app
 
+# Serve gifs
+- url: /(.+\.gif)$
+  static_files: \1
+  upload: .+\.gif$
+
 # Serve javascript
 - url: /(.+\.js)$
   static_files: \1

@@ -42,21 +42,22 @@ function updateGameState(gameState, key) {
     });
     req.done(function (response, textStatus, jqXHR) {
         //if response is 0, game is still in play
+        a = document.getElementById("announce");
         if(response == 0) {
             drawBoard(key);
+            a.innerHTML = 'Click any open square to continue.';
         } else {
         //otherwise, it is in an ending state
-            //nullify onClick function wrapper
-            squareClicked = function () {};
-            a = document.getElementById("announce");
             if(response == 1) {
-                a.innerHTML = "Human player wins! Refresh page to play again.";
+                a.innerHTML = "Human player wins! <a href=\"/\">Click here</a> to play again.";
             } else if(response == 2) {
-                a.innerHTML = "Computer player wins! Refresh page to play again.";
+                a.innerHTML = "Computer player wins! <a href=\"/\">Click here</a> to play again.";
             } else if(response == 3) { 
-                a.innerHTML = "The game is a tie! Refresh page to play again.";
+                a.innerHTML = "The game is a tie! <a href=\"/\">Click here</a> to play again.";
             }
             drawBoard(key);
+            //nullify onClick function wrapper
+            squareClicked = function () {};
         }
     });
 }
@@ -64,6 +65,8 @@ function updateGameState(gameState, key) {
 //wrapper to pass the square that was clicked
 function squareClicked(squareNumber, key) {
     getGameState(squareNumber, key);
+    a = document.getElementById("announce");
+    a.innerHTML = '<img src="loader.gif" />';
 }
 
 /*
