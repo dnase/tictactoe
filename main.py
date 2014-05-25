@@ -125,15 +125,8 @@ class UpdateGameState(webapp2.RequestHandler):
             try:
                 game_state = json.loads(game_state_json)
                 has_won = moves.winning_state(game_state)
-                if has_won == 1:
-                    #human win
-                    self.response.write("1")
-                elif has_won == 2:
-                    #computer win
-                    self.response.write("2")
-                elif has_won == 3:
-                    #tie
-                    self.response.write("3")
+                if has_won != False:
+                    self.response.write(str(has_won))
                 else:
                     #game is not over
                     game_state[moves.best_move(game_state)] = 'O'
