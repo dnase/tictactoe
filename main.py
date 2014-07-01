@@ -14,38 +14,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-'''
-Tic Tac Toe - Human vs. Computer
-I made the assumption that the human always plays first, and thus
-the human is always "X". For the AI, I chose to use the alpha-beta
-pruning variant of the Minimax algorithm after some brief research
-on the subject. I used canvas tags to draw each square on the game
-board, and the UI code communicates with the server via AJAX. The
-state of a user's game is cached serverside using the memcache API
-exposed by Google App Engine.
-
-From a security standpoint: 
-There is minimal verification of what is communicated between the 
-client and server, and cheating at the game would be relatively trivial
-for anyone who had even a basic knowledge of JavaScript. I did not
-consider it very important for an application like this to have
-strong input sanitization, but I do check the sanity of the key
-in order to avoid the possibility for a buffer overflow. In the case
-of a web application whose data is of a more sensitive nature, I would
-use more thorough input sanitization, and likely force SSL. Theoretically, 
-it is possible for one user to guess at the key of another user's game 
-session and disrupt it, but the odds of doing so successfully are very slim.
-
-Why is this code not object oriented?
-I am perfectly comfortable writing OO Python, but for a project of this size
-and scope, it would not really contribute anything except additional overhead. 
-I understand and appreciate the advantages of writing OO code when working in
-a team of developers - modularity and maintainability are paramount in that
-sort of environment. For this application, I made a deliberate choice to keep
-it simple. Where possible, I write functions without side effects, and since
-Python does not have tail call optimization, I avoided recursion as much as
-possible.
-'''
 import cgi
 import json
 import random
